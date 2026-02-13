@@ -13,7 +13,7 @@ const HomeSection = () => {
         className="text-center"
       >
         <h1 className="font-handwritten text-6xl md:text-8xl mb-4 font-bold" style={{ color: "#5c4a37" }}>
-          Happy Valentine's Day
+          Happy Valentine&apos;s Day
         </h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}

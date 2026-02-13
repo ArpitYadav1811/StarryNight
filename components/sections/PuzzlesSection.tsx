@@ -225,7 +225,6 @@ const PuzzlesSection = () => {
                             border: "2px solid #8b6f47",
                             color: "#5c4a37",
                           }}
-                          placeholder="Type your answer..."
                           animate={
                             isShaking
                               ? {
