@@ -70,9 +70,6 @@ const BlurUpImage = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: isLoaded ? 1 : 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        style={{ 
-          imageRendering: "high-quality",
-        }}
       />
     </div>
   );
