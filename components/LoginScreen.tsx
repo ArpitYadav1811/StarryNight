@@ -22,20 +22,22 @@ const LoginScreen = ({ onLogin, anniversaryDate }: LoginScreenProps) => {
   }, []);
 
   const formatDateForPassword = (dateString: string): string[] => {
-    const date = new Date(dateString);
+    // Parse date string (YYYY-MM-DD format)
+    const [year, month, day] = dateString.split("-").map(Number);
+    
     // Format as YYYY-MM-DD or MM/DD/YYYY or DD-MM-YYYY
-    // Try multiple formats
+    // Try multiple formats with proper padding
+    const monthStr = String(month).padStart(2, "0");
+    const dayStr = String(day).padStart(2, "0");
+    const yearStr = String(year);
+    
     const formats = [
-      date.toISOString().split("T")[0], // YYYY-MM-DD
-      `${String(date.getMonth() + 1).padStart(2, "0")}/${String(
-        date.getDate()
-      ).padStart(2, "0")}/${date.getFullYear()}`, // MM/DD/YYYY
-      `${String(date.getDate()).padStart(2, "0")}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}-${date.getFullYear()}`, // DD-MM-YYYY
-      `${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-        date.getDate()
-      ).padStart(2, "0")}-${date.getFullYear()}`, // MM-DD-YYYY
+      `${yearStr}-${monthStr}-${dayStr}`, // YYYY-MM-DD
+      `${monthStr}/${dayStr}/${yearStr}`, // MM/DD/YYYY
+      `${dayStr}-${monthStr}-${yearStr}`, // DD-MM-YYYY
+      `${monthStr}-${dayStr}-${yearStr}`, // MM-DD-YYYY
+      `${dayStr}/${monthStr}/${yearStr}`, // DD/MM/YYYY
+      `${yearStr}/${monthStr}/${dayStr}`, // YYYY/MM/DD
     ];
     return formats;
   };
@@ -44,17 +46,32 @@ const LoginScreen = ({ onLogin, anniversaryDate }: LoginScreenProps) => {
     e.preventDefault();
     setError("");
 
-    const date = new Date(anniversaryDate);
+    // Parse anniversary date (should be in YYYY-MM-DD format)
     const validFormats = formatDateForPassword(anniversaryDate);
 
     // Normalize input (remove spaces, handle different separators)
-    const normalizedInput = password.trim().toLowerCase();
-    const normalizedFormats = validFormats.map((f) => f.toLowerCase().trim());
+    // Also normalize separators: convert / and - to a standard format for comparison
+    const normalizeInput = (input: string): string => {
+      return input
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "") // Remove all spaces
+        .replace(/[\/\-\.]/g, "-"); // Normalize separators (/, -, .) to dash
+    };
+
+    const normalizedInput = normalizeInput(password);
+    const normalizedFormats = validFormats.map((f) => normalizeInput(f));
+    
+    // Debug in development (remove in production if needed)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Anniversary date:', anniversaryDate);
+      console.log('User input:', password);
+      console.log('Normalized input:', normalizedInput);
+      console.log('Valid formats:', normalizedFormats);
+    }
 
     // Check if password matches any valid format
-    const isValid =
-      normalizedFormats.some((format: string) => normalizedInput === format) ||
-      normalizedInput === anniversaryDate.toLowerCase().trim();
+    const isValid = normalizedFormats.some((format: string) => normalizedInput === format);
 
     if (isValid) {
       // Save authentication cookie
