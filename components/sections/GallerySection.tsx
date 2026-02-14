@@ -17,7 +17,6 @@ const GallerySection = () => {
       try {
         setLoading(true);
         setError(null);
-        console.log("🔍 Fetching memories from Supabase...");
         
         const { data, error: fetchError } = await supabase
           .from("memories")
@@ -27,15 +26,6 @@ const GallerySection = () => {
         if (fetchError) {
           console.error("❌ Supabase error:", fetchError);
           throw fetchError;
-        }
-
-        console.log("✅ Fetched memories:", data);
-        console.log("📊 Number of memories:", data?.length || 0);
-        
-        if (data && data.length > 0) {
-          console.log("🖼️ First memory:", data[0]);
-          console.log("🖼️ First memory real_image_url:", data[0].real_image_url);
-          console.log("🖼️ First memory ghibli_image_url:", data[0].ghibli_image_url);
         }
 
         setMemories(data || []);
